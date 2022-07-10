@@ -1,0 +1,27 @@
+#! /usr/bin/env bash
+# vim: noai:ts=4:sw=4
+
+# DESCRIPTION
+#   Generates a template for a file based on its extension.
+#
+# USAGE
+#   gen-template out.ext
+
+CURR_PATH="$(pwd)"
+SCRIPT_PATH="$(dirname "$(readlink -f "$0")")"
+TEMPLATE_PATH="$(dirname "$SCRIPT_PATH")/templates"
+
+get_file_extension() {
+    FILE=$1
+    EXT=`echo "$FILE" | cut -d '.' -f2`   
+    echo $EXT
+}
+
+gen_file() {
+    FILE=$1
+    EXTENSION=$(get_file_extension $FILE)
+    TEMPLATE_FILE="t.$EXTENSION"
+    cp "$TEMPLATE_PATH/$TEMPLATE_FILE" "$CURR_PATH/$FILE"
+}
+
+gen_file $1
