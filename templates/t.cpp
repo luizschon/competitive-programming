@@ -1,4 +1,8 @@
 // vim: noai:ts=4:sw=4
+/* 
+ * Luiz Carlos Schonarth Junior
+ * Universidade de Brasília - UnB - 
+ */
 #include <bits/stdc++.h>
 
 #define pb push_back
@@ -7,6 +11,10 @@
 typedef long long ll;
 typedef unsigned long long ull;
 typedef unsigned int u;
+typedef std::pair<int, int> pii;
+typedef std::vector<int> vi;
+typedef std::pair<ll, ll> pll;
+typedef std::vector<ll> vll;
 
 using namespace std;
 
