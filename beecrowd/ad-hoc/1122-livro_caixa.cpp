@@ -15,7 +15,7 @@ int n, f, fluxo[MAX_SIZE];
 map<pair<int, int>, int> memo;
 
 /*  */
-int verifica(int idx, int curr_sum) {
+int busca_completa(int idx, int curr_sum) {
     if (idx == n) {
         if (curr_sum == f)
             return 1;
@@ -27,8 +27,8 @@ int verifica(int idx, int curr_sum) {
         return memo[mp(curr_sum, idx)];
 
     int right, left;
-    right = verifica(idx+1, curr_sum+fluxo[idx]);
-    left = verifica(idx+1, curr_sum-fluxo[idx]);
+    right = busca_completa(idx+1, curr_sum+fluxo[idx]);
+    left = busca_completa(idx+1, curr_sum-fluxo[idx]);
 
     if (right && !left)
         sign[idx] = 1;
@@ -50,7 +50,7 @@ int main () {
             sign[i] = 0;
         }
 
-        int verificado = verifica(0, 0);
+        int verificado = busca_completa(0, 0);
 
         for (int i=0; i<n && verificado; i++) {
             switch (sign[i]) {
