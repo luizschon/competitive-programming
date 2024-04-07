@@ -19,9 +19,6 @@ compile_c() {
     gcc -std=c11 -static -fno-asm -lm -s -Wl,--stack=268435456 -O2 $1
 }
 
-CURR_PATH="$(pwd)"
-SCRIPT_PATH="$(dirname "$(readlink -f "$0")")"
-
 # Source files provided in argv
 files=$@
 
@@ -31,7 +28,6 @@ fi
 
 filename=$(basename -- "$1")
 extension="${filename##*.}"
-echo $filename $extension
 
 case $extension in
     "rs")           compile_rust $files ;;
