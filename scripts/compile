@@ -1,0 +1,42 @@
+#! /usr/bin/env sh
+# vim: noai:ts=4:sw=4
+
+# DESCRIPTION
+#   Compiles the code, regardless of programming language
+#
+# USAGE
+#   compile file ...
+#
+compile_rust() {
+    rustc --edition=2021 -O -C link-args=-Wl,-zstack-size=268435456 $1
+}
+
+compile_cpp() {
+    g++ -static -Wl,--stack=268435456 -O2 -std=c++17 $1
+}
+
+compile_c() {
+    gcc -std=c11 -static -fno-asm -lm -s -Wl,--stack=268435456 -O2 $1
+}
+
+CURR_PATH="$(pwd)"
+SCRIPT_PATH="$(dirname "$(readlink -f "$0")")"
+
+# Source files provided in argv
+files=$@
+
+if [ -z "$files" ]; then
+    echo "ERROR: no source files provided."
+fi
+
+filename=$(basename -- "$1")
+extension="${filename##*.}"
+echo $filename $extension
+
+case $extension in
+    "rs")           compile_rust $files ;;
+    "cpp" | "cc")   compile_cpp $files ;;
+    "c")            compile_c $files ;;
+    *)              echo "ERROR: unsupported compilation target"
+esac
+
