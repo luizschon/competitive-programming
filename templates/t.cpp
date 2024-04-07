@@ -1,8 +1,4 @@
 // vim: noai:ts=4:sw=4
-/* 
- * Luiz Carlos Schonarth Junior
- * Universidade de Brasília - UnB - 
- */
 #include <bits/stdc++.h>
 
 #define pb push_back

@@ -21,8 +21,7 @@ gen_file() {
     file=$1
     ext=$(get_file_extension $file)
     template="t.$ext"
-    line=$(grep -n "Universidade de Brasília" "$TEMPLATE_PATH/$template" | cut -d: -f 1)
-    sed $line"s/$/$(date) &/" "$TEMPLATE_PATH/$template" > "$CURR_PATH/$file"
+    cat "$TEMPLATE_PATH/$template" > "$CURR_PATH/$file"
 }
 
 gen_file $1
