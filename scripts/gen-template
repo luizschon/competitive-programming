@@ -24,5 +24,7 @@ gen_file() {
     cat "$TEMPLATE_PATH/$template" > "$CURR_PATH/$file"
 }
 
-gen_file $1
+if [ ! -e $1 ]; then
+    gen_file $1
+fi
 $EDITOR "$CURR_PATH/$1"
