@@ -1,7 +1,7 @@
-use std::{cmp::Ordering, i64};
 // vim: noai:ts=4:sw=4
 #[allow(unused_imports)]
 use std::{
+    cmp::Ordering,
     collections::HashMap,
     io::{stdin, stdout, BufWriter, Write},
 };
@@ -47,8 +47,8 @@ fn solve(cost: &[(usize, i64, &str)]) -> i64 {
 
         let rev_s = s.chars().rev().collect::<String>();
 
-        let min_cost = if let Some(prev) = prev {
-            &[
+        let val = if let Some(prev) = prev {
+            let o = &[
                 match s.cmp(&prev) {
                     Ordering::Greater | Ordering::Equal => {
                         min_cost(memo, rest, Some(s), Some(StringOrd::Normal))
@@ -62,9 +62,8 @@ fn solve(cost: &[(usize, i64, &str)]) -> i64 {
                     }
                     _ => None,
                 },
-            ]
-            .iter()
-            .fold(None, |acc, v| {
+            ];
+            o.iter().fold(None, |acc, v| {
                 if let Some(val) = v {
                     acc.and_then(|a| Some(std::cmp::min::<i64>(a, *val)))
                         .or(Some(*val))
@@ -73,13 +72,12 @@ fn solve(cost: &[(usize, i64, &str)]) -> i64 {
                 }
             })
         } else {
-            &[
+            let o = &[
                 min_cost(memo, rest, Some(s), Some(StringOrd::Normal)),
                 min_cost(memo, rest, Some(&rev_s), Some(StringOrd::Reversed))
                     .and_then(|temp| Some(c + temp)),
-            ]
-            .iter()
-            .fold(None, |acc, v| {
+            ];
+            o.iter().fold(None, |acc, v| {
                 if let Some(val) = v {
                     acc.and_then(|a| Some(std::cmp::min::<i64>(a, *val)))
                         .or(Some(*val))
@@ -89,8 +87,8 @@ fn solve(cost: &[(usize, i64, &str)]) -> i64 {
             })
         };
 
-        memo.insert((*idx, prev_ord), *min_cost);
-        *min_cost
+        memo.insert((*idx, prev_ord), val);
+        val
     }
 
     let mut memo = Memo::new();
