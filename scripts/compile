@@ -8,7 +8,7 @@
 #   compile file ...
 #
 compile_rust() {
-    rustc '+1.75.0' --edition=2021 -O -C link-args=/STACK:268435456 -o a.out $1
+    rustc '+1.75.0' --edition=2021 -O -C link-args=-Wl,-zstack-size=268435456 -o a.out $1
 }
 
 compile_cpp() {
