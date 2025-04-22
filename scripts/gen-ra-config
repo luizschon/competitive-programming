@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# Directory to watch
+DIR="."
+SYSROOT="$(rustc --print sysroot)"
+SYSROOT_SRC="$SYSROOT/lib/rustlib/src/rust/library"
+
+# Generate rust-project.json with all .rs files in directory tree
+generate_rust_project() {
+    echo '{
+  "sysroot": "'"$SYSROOT"'",
+  "sysroot_src": "'"$SYSROOT_SRC"'",
+  "crates": [' > rust-project.json
+
+    first=true
+    # Find all .rs files in the current directory and subdirectories
+    while IFS= read -r rs_file; do
+        # Convert absolute path to relative path
+        rel_path=$(realpath --relative-to="$DIR" "$rs_file")
+
+        if [ "$first" = true ]; then
+            first=false
+        else
+            echo "," >> rust-project.json
+        fi
+        echo '    {
+      "root_module": "'"$rel_path"'",
+      "edition": "2021",
+      "deps": []
+    }' >> rust-project.json
+    done < <(find "$DIR" -type f -name "*.rs")
+
+    echo '  ]
+}' >> rust-project.json
+
+    echo "Generated rust-project.json with all .rs files in directory tree."
+}
+
+# Generate initially
+generate_rust_project
+
+# Install inotify-tools if not already installed
+# Watch for file creation/deletion events recursively and regenerate rust-project.json
+inotifywait -m -r -e create,delete,moved_to,moved_from --format '%e %w%f' "$DIR" |
+
+while read event file; do
+    if [[ "$file" == *.rs ]]; then
+        echo "Rust file $event: $file - regenerating rust-project.json"
+        generate_rust_project
+    fi
+done
