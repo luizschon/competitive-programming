@@ -13,7 +13,7 @@ TEMPLATE_PATH="$(dirname "$SCRIPT_PATH")/templates"
 
 get_file_extension() {
     file=$1
-    ext=`echo "$file" | cut -d '.' -f2`   
+    ext=`echo "$file" | cut -d '.' -f2`
     echo $ext
 }
 
@@ -27,4 +27,3 @@ gen_file() {
 if [ ! -e $1 ]; then
     gen_file $1
 fi
-$EDITOR "$CURR_PATH/$1"
