@@ -1,7 +1,10 @@
 // vim: noai:ts=4:sw=4
 #[allow(unused_imports)]
 use std::cmp::{max, min};
-use std::io::{stdin, stdout, BufWriter, Write};
+use std::{
+    collections::HashMap,
+    io::{stdin, stdout, BufWriter, Write},
+};
 
 #[derive(Default)]
 struct Scanner {
@@ -20,27 +23,54 @@ impl Scanner {
     }
 }
 
-pub fn change(amount: i32, coins: Vec<i32>) -> i32 {
-    let amount = amount as usize;
-    let len = coins.len();
-    let mut dp = vec![0; amount + 1];
-    // Caso base da recursão.
-    dp[0] = 1;
+pub fn change_td(amount: i32, coins: Vec<i32>) -> i32 {
+    type Memo = HashMap<(i32, usize), i32>;
 
-    // Ordena lista de moedas
-    let mut coins = coins;
-    coins.sort_unstable();
+    fn solve(memo: &mut Memo, amount: i32, coins: &[i32], curr_idx: usize) -> i32 {
+        let Some(curr_coin) = coins.first() else {
+            return 0;
+        };
 
-    for a in 1..=amount {
-        dp[a] = coins
-            .iter()
-            .take_while(|&c| *c as usize <= a)
-            .map(|&c| dp[a - c as usize])
-            .sum();
+        if let Some(val) = memo.get(&(amount, curr_idx)) {
+            return *val;
+        }
+
+        if amount - curr_coin == 0 {
+            return 1;
+        } else if amount - curr_coin < 0 {
+            return 0;
+        }
+
+        // We can take the coin or skip it and never use it again
+        let ans = solve(memo, amount - curr_coin, coins, curr_idx)
+            + solve(memo, amount, &coins[1..], curr_idx + 1);
+        memo.insert((amount, curr_idx), ans);
+        ans
     }
 
-    println!("{:?}", dp);
+    let mut coins = coins;
+    coins.sort_unstable();
+    let mut memo = Memo::new();
+    solve(&mut memo, amount, &coins, 0)
+}
 
+pub fn change_bu(amount: i32, coins: Vec<i32>) -> i32 {
+    let amount = amount as usize;
+    let mut dp = vec![0; amount + 1];
+
+    // Base case: there are 1 way to make 0 out of any list o coins
+    dp[0] = 1;
+
+    // Does any ordering work for this problem?
+    //
+    // - Yes, as long as we update the states in dp
+    // for each coin only once.
+
+    for coin in coins {
+        for val in coin as usize..=amount {
+            dp[val] += dp[val - coin as usize];
+        }
+    }
     dp[amount]
 }
 
@@ -64,5 +94,6 @@ fn main() {
         };
     }
 
-    run!("Bottom-up approach", change(amount, coins.clone()));
+    run!("Top-down approach", change_td(amount, coins.clone()));
+    run!("Bottom-up approach", change_bu(amount, coins.clone()));
 }
