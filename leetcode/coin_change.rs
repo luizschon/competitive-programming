@@ -3,7 +3,6 @@
 use std::cmp::{max, min};
 use std::{
     collections::HashMap,
-    i32,
     io::{stdin, stdout, BufRead, BufWriter, Write},
 };
 
